@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tunnda — Admin
 
-## Getting Started
+Dashboard d'administration de la plateforme Tunnda, réservé à l'équipe : suivi de l'activité, des comptes et de la messagerie.
 
-First, run the development server:
+Projets liés : [tunnda-api](https://github.com/dsrdesign/tunnda-api) · [tunnda-web](https://github.com/dsrdesign/tunnda-web).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Confidentialité : métadonnées seulement
+
+Les arbres appartiennent aux familles. **Le dashboard ne montre jamais leur contenu** (personnes, noms, dates, liens, photos). Il ne voit que des métadonnées : nombre de familles, de membres et de fiches, activité, livraison des messages, comptes suspendus.
+
+## Où en est-on
+
+| Étape | État |
+|---|---|
+| Projet Next.js initialisé | ✅ fait |
+| Connexion administrateur (téléphone et code), garde de rôle, journal d'audit | ⬜ à faire |
+| Vue d'ensemble : familles, membres, fiches, activité | ⬜ à faire |
+| Utilisateurs : suspension et réactivation d'un compte | ⬜ à faire |
+| Messagerie : livraison des codes et invitations WhatsApp / SMS | ⬜ à faire |
+
+## Architecture : par fonctionnalité, comme `mimo-admin`
+
+```text
+features/<nom>/
+  types/        types et libellés
+  repository/   interface (le contrat)
+  api/          implémentation : appels HTTP
+  services/     service qui reçoit le dépôt
+  hooks/        react-query : useQuery / useMutation
+  components/   écrans et tableaux de la fonctionnalité
+  index.ts      ce que la fonctionnalité expose aux pages
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Les pages de `app/` restent fines : elles assemblent les composants et les hooks d'une fonctionnalité.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Sécurité prévue (sur le modèle de mimo-admin)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Jeton de l'API dans un cookie `httpOnly`, jamais visible du navigateur.
+- Appels du navigateur via un proxy Next.js qui ajoute le jeton ; aucun appel direct à l'API.
+- Jeton de rôle administrateur distinct : il ne donne aucun accès aux routes des familles.
+- Chaque action sensible tracée dans le journal d'audit ; numéros masqués dans les listes ; site en `noindex`.
 
-## Learn More
+## Stack
 
-To learn more about Next.js, take a look at the following resources:
+- [Next.js](https://nextjs.org) 16 (App Router) et React 19 — version récente : lire `AGENTS.md` et `node_modules/next/dist/docs/` avant d'écrire du code.
+- Tailwind CSS 4
+- TypeScript
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Démarrage
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm install
+npm run dev -- -p 3002        # http://localhost:3002 (API sur 3000, web sur 3001)
+```
