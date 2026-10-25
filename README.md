@@ -13,10 +13,14 @@ Les arbres appartiennent aux familles. **Le dashboard ne montre jamais leur cont
 | Étape | État |
 |---|---|
 | Projet Next.js initialisé | ✅ fait |
-| Connexion administrateur (téléphone et code), garde de rôle, journal d'audit | ⬜ à faire |
-| Vue d'ensemble : familles, membres, fiches, activité | ⬜ à faire |
-| Utilisateurs : suspension et réactivation d'un compte | ⬜ à faire |
-| Messagerie : livraison des codes et invitations WhatsApp / SMS | ⬜ à faire |
+| Connexion administrateur (téléphone et code), garde de rôle, journal d'audit | ✅ fait |
+| Vue d'ensemble : comptes, familles, fiches, photos, codes envoyés, activité sur 14 jours | ✅ fait |
+| Utilisateurs : recherche, numéros masqués, suspension (avec raison) et réactivation | ✅ fait |
+| Familles : métadonnées seulement (membres, fiches, photos, invitations, activité) | ✅ fait |
+| Messagerie : chaque envoi de code, son canal (WhatsApp, SMS) et la raison d'un échec | ✅ fait |
+| Journal d'audit : qui, quoi, quand, d'où | ✅ fait |
+
+Pages : `/` (vue d'ensemble), `/utilisateurs`, `/familles`, `/messagerie`, `/audit`, `/connexion`.
 
 ## Architecture : par fonctionnalité, comme `mimo-admin`
 
@@ -50,5 +54,8 @@ Les pages de `app/` restent fines : elles assemblent les composants et les hooks
 
 ```bash
 npm install
-npm run dev -- -p 3002        # http://localhost:3002 (API sur 3000, web sur 3001)
+cp .env.example .env.local    # API_URL=http://localhost:3000/api/v1
+npm run dev                   # http://localhost:3002 (API sur 3000, web sur 3001)
 ```
+
+Un administrateur ne s'inscrit pas : tunnda-api le crée au démarrage à partir de `ADMIN_SEED_PHONE` et `ADMIN_SEED_NAME` (voir `tunnda-api/docs/admin.md`). On se connecte ensuite avec ce numéro et le code reçu.
